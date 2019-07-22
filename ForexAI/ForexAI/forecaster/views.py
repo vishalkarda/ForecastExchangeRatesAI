@@ -78,8 +78,7 @@ def predictor(post):
         last_value = df.iloc[-1, :-1].values[1]
 
         cache.set('data', df, 60)
-        # print(train_model(df['rates'].values, max_waiting_time, last_value))
-        # return train_model(df['rates'].values, max_waiting_time, last_value)
+        
 
 
     else:
@@ -89,32 +88,24 @@ def predictor(post):
 
         if datetime.datetime.strptime(str(start), "%Y-%m-%d").date() != datetime.date.today():
             df = magic(start, end, sym, base)
-            print('T1')
-            print(df)
-            print('T2')
+           
             last_value = df.iloc[-1, :-1].values[1]
             diff = df.shape[0]
 
             data_cache = pd.DataFrame(data_cache)
-            print('S1')
-            print(data_cache)
-            print('S2')
+           
             data_cache = data_cache.iloc[diff:]
             frames = [data_cache, df]
             df = pd.concat(frames)
-            print('SV1')
-            print(data_cache)
-            print('SV2')
+            
             cache.set('data', df, 60)
-            # print(train_model(df['rates'].values, max_waiting_time, last_value))
-            # return train_model(df['rates'].values, max_waiting_time, last_value)
+            
 
         else:
             data_cache = cache.get('data')
             df = pd.DataFrame(data_cache)
             last_value = df.iloc[-1, :-1].values[1]
-            # print(train_model(df['rates'].values, max_waiting_time, last_value))
-            # return train_model(df['rates'].values, max_waiting_time, last_value)
+           
         
     return train_model(df['rates'].values, max_waiting_time, last_value, amount)
 
@@ -159,7 +150,7 @@ def findFriday():
 
 def updateResult(index, result, days, time, last_value, amount):
 
-    print(result)
+    
     if index == len(result)+1:
         result.insert(0, last_value)
         result.insert(1, last_value)
@@ -193,9 +184,7 @@ def magic(start, end, sym, base):
     data = json.loads(data.text)
 
     df = pd.DataFrame(data).reset_index()
-    print('------------MAGIC------------------')
-    print(df)
-    print('------------MAGIC------------------')
+    
     df['rates'] = df['rates'].apply(inr_convert)
 
     return df
@@ -210,5 +199,4 @@ def train_model(actualdata, max_waiting_time, last_value, amount):
     resultDict = updateResult(friday, predicted_result, days, max_waiting_time, last_value, amount)
     result_json = json.dumps(resultDict)
     
-    print(result_json)
     return result_json
